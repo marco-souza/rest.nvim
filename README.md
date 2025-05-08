@@ -62,7 +62,7 @@ Install with your preferred package manager:
 
 ```lua
 {
-  "username/rest.nvim",
+  "marco-souza/rest.nvim",
   dependencies = {
     "MunifTanjim/nui.nvim",
     "nvim-lua/plenary.nvim"
