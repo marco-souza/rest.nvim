@@ -1,0 +1,4 @@
+GET https://endoflife.date/api/nodejs/20.json
+
+Accept: application/json
+
