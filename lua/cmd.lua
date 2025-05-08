@@ -2,7 +2,7 @@ local M = {}
 
 ---@class CmdWithSubcommand
 ---@field impl fun(args:string[], opts: table) The command implementation
----@field complete? fun(subcmd_arg_lead: string): string[] (optional) Command completions callback, taking the lead of the subcommand's arguments
+---@field complete? fun(subcmd_arg_lead: string): string[] Command completions callback
 
 ---@param name string The command name
 ---@param desc string The command description

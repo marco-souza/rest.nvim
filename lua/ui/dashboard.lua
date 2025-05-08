@@ -1,6 +1,5 @@
 local Popup = require("nui.popup")
 local Layout = require("nui.layout")
-local event = require("nui.utils.autocmd").event
 
 local popup_one, popup_two =
   Popup({
@@ -79,12 +78,12 @@ return {
       { "Hit <C-s> to fetch" }
     )
     popup_one:map("n", "<C-s>", function()
-      local content = vim.fn.join(
+      local req_content = vim.fn.join(
         vim.api.nvim_buf_get_lines(popup_one.bufnr, 0, -1, false),
         "\n"
       )
 
-      local request = require("utils.rest_parser").parse_rest_file(content)
+      local request = require("utils.rest_parser").parse_rest_file(req_content)
 
       if not request then
         vim.api.nvim_buf_set_lines(
@@ -114,7 +113,7 @@ return {
           body = request.body,
         })
 
-        local output = { "No output" }
+        local output
 
         if string.match(res.body, "^{.*}$") then -- json
           local data = vim.json.decode(res.body)

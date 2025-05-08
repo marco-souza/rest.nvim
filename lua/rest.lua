@@ -1,10 +1,10 @@
 local M = {}
 
-M.setup = function(opts)
+M.setup = function()
   require("cmd").register("Rest", "Rest.nvim Dashboard", {
     open = {
       desc = "Show Rest Dashboard",
-      impl = function(args)
+      impl = function()
         local content = nil
 
         local buf_ext = vim.fn.expand("%:e")
@@ -20,7 +20,7 @@ M.setup = function(opts)
     },
     close = {
       desc = "Hide Rest Dashboard",
-      impl = function(args)
+      impl = function()
         require("ui.dashboard").close()
       end,
     },
