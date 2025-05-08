@@ -99,6 +99,37 @@ local tests = {
     assert(res.body == nil, "Parsing failed: result.body is not nil")
     assert(next(res.headers) == nil, "Parsing failed: header is not nil")
   end,
+
+  fetched_parsed_request = function()
+    local testContent = [[
+      GET https://postman-echo.com/get
+
+      Accept: application/json
+      Content-Type: application/json
+
+      {"key": "value"}
+    ]]
+
+    local request = parse_rest_file(testContent)
+    assert(request ~= nil, "Parsing failed: result is nil")
+
+    local curl = require("plenary.curl")
+    local res = curl.request({
+      url = request.url,
+      method = request.method,
+      headers = request.headers,
+      body = request.body,
+    })
+
+    assert(res.status == 200, "Request failed: " .. res.status)
+    assert(type(res.body) == "string", "Request failed: " .. res.status)
+
+    local data = vim.json.decode(res.body)
+    assert(
+      data.args.key == "value",
+      "Parsing failed: result.body.key is not correct"
+    )
+  end,
 }
 
 -- run all
