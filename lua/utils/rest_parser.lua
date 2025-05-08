@@ -63,9 +63,6 @@ function M.parse_rest_file(fileContent)
       local method_url_regex = "^(.*) (https?://.+)$"
       local method, url = string.match(line, method_url_regex)
 
-      -- replace URL environment variables
-      replace_envs(url)
-
       -- validate method
       if not is_valid_method(method) then
         error("Invalid method: " .. method)
@@ -82,7 +79,7 @@ function M.parse_rest_file(fileContent)
     -- check if it's a header line
     local header_regex = "^(.*): (.*)$"
     local key, value = string.match(line, header_regex)
-    if is_valid_header(key) then
+    if is_valid_header(key) and value ~= nil then
       -- replace headers environment variables
       request.headers[key] = replace_envs(value)
 
@@ -100,7 +97,10 @@ function M.parse_rest_file(fileContent)
   end
 
   -- replace body environment variables
-  request.body = replace_envs(request.body)
+  if request.body ~= nil then
+    request.body = vim.trim(request.body)
+    request.body = replace_envs(request.body)
+  end
 
   return request
 end
