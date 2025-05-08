@@ -2,6 +2,17 @@
 
 A Neovim plugin that provides a REST client interface for making HTTP requests directly from your editor. Ideal for API testing and development workflows.
 
+### Features
+
+- Execute HTTP requests directly from Neovim
+- Interactive REST client dashboard
+- Support for `.rest` files to define API requests
+- View and edit request headers, body, and URL
+- Toggle between horizontal and vertical layouts
+- Supports all major HTTP methods: GET, POST, PUT, DELETE, PATCH, OPTIONS, HEAD
+- Seamless integration with `nui.nvim` and `plenary.nvim`
+- Support for using environment variables in `.rest` files and dashboard
+
 ## Dependencies
 
 - [nui.nvim](https://github.com/MunifTanjim/nui.nvim) - UI components
@@ -81,13 +92,4 @@ Once you have the dashboard open:
 
 ## License
 
-### Features
-
-- Execute HTTP requests directly from Neovim
-- Interactive REST client dashboard
-- Support for `.rest` files to define API requests
-- View and edit request headers, body, and URL
-- Toggle between horizontal and vertical layouts
-- Supports all major HTTP methods: GET, POST, PUT, DELETE, PATCH, OPTIONS, HEAD
-- Seamless integration with `nui.nvim` and `plenary.nvim`
-- Support for using environment variables in `.rest` files and dashboard
+MIT License. See [LICENSE](LICENSE) for details.
