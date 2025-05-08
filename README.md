@@ -81,5 +81,13 @@ Once you have the dashboard open:
 
 ## License
 
-MIT
+### Features
 
+- Execute HTTP requests directly from Neovim
+- Interactive REST client dashboard
+- Support for `.rest` files to define API requests
+- View and edit request headers, body, and URL
+- Toggle between horizontal and vertical layouts
+- Supports all major HTTP methods: GET, POST, PUT, DELETE, PATCH, OPTIONS, HEAD
+- Seamless integration with `nui.nvim` and `plenary.nvim`
+- Support for using environment variables in `.rest` files and dashboard

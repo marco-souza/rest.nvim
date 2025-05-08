@@ -1,3 +1,5 @@
+local replace_envs = require("utils.env").replace_envs
+
 local M = {}
 
 local VALID_METHOD = {
@@ -61,14 +63,18 @@ function M.parse_rest_file(fileContent)
       local method_url_regex = "^(.*) (https?://.+)$"
       local method, url = string.match(line, method_url_regex)
 
+      -- replace URL environment variables
+      replace_envs(url)
+
       -- validate method
       if not is_valid_method(method) then
         error("Invalid method: " .. method)
         return nil
       end
 
+      -- replace URL environment variables
+      request.url = replace_envs(url)
       request.method = method
-      request.url = url
 
       goto continue
     end
@@ -77,7 +83,8 @@ function M.parse_rest_file(fileContent)
     local header_regex = "^(.*): (.*)$"
     local key, value = string.match(line, header_regex)
     if is_valid_header(key) then
-      request.headers[key] = value
+      -- replace headers environment variables
+      request.headers[key] = replace_envs(value)
 
       goto continue
     end
@@ -91,6 +98,9 @@ function M.parse_rest_file(fileContent)
 
     ::continue::
   end
+
+  -- replace body environment variables
+  request.body = replace_envs(request.body)
 
   return request
 end
