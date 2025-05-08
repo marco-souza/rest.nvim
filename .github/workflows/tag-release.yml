@@ -1,0 +1,19 @@
+name: Tag release
+
+on:
+  push:
+    paths:
+      - plugin.json
+
+jobs:
+  gh-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Create release with tag
+        uses: marco-souza/tag-release@1.2.0
+        with:
+          version-file: plugin.json
+          token: ${{ secrets.GITHUB_TOKEN }}
+
