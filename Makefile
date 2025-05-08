@@ -1,6 +1,5 @@
 all: pr-ready
 
-
 decrypt:
 	echo "===> Decrypting" && gpg -d .env.gpg > .env
 
