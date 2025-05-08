@@ -1,4 +1,4 @@
-<h1 align="center">`rest.nvim`</h1>
+<h1 align="center">rest.nvim</h1>
 
 <div>
   <h4 align="center">
