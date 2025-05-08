@@ -36,13 +36,4 @@ local tests = {
   end,
 }
 
--- run all
-
-for name, test in pairs(tests) do
-  local status, err = pcall(test)
-  if not status then
-    print(string.format("Test failed: %s\n%s", name, err))
-  else
-    print(string.format("Test passed: %s\n", name))
-  end
-end
+return tests
