@@ -98,6 +98,14 @@ local function load_response()
   vim.schedule(feth_to_ui(request))
 end
 
+local function yank_response()
+  local content = vim.api.nvim_buf_get_lines(popup_two.bufnr, 0, -1, false)
+  local text = vim.fn.join(content, "\n")
+
+  vim.fn.setreg("+", text)
+  vim.notify("Yanked to clipboard")
+end
+
 local DEFAULT_REQUEST_CONTENT = {
   "GET https://postman-echo.com/get",
   "",
@@ -149,6 +157,7 @@ return {
     popup_one:map("n", "q", unmount, { noremap = true })
     popup_one:map("n", "r", toggle_layout, {})
     popup_one:map("n", "<C-s>", load_response, { noremap = true })
+    popup_one:map("n", "<C-y>", yank_response, { noremap = true })
   end,
 
   close = unmount,
