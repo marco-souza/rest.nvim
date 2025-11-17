@@ -1,0 +1,173 @@
+local describe = describe
+local it = it
+local assert = assert
+local before_each = before_each
+local after_each = after_each
+
+local terminal_manager = require("term.utils.terminal")
+
+describe("terminal_manager", function()
+  before_each(function()
+    -- Clear all sessions before each test
+    terminal_manager.clear_all()
+  end)
+
+  after_each(function()
+    -- Cleanup after each test
+    terminal_manager.clear_all()
+  end)
+
+  describe("create", function()
+    it("should create a new terminal session", function()
+      local session = terminal_manager.create("echo test")
+      assert.is_not_nil(session)
+      assert.is_not_nil(session.id)
+      assert.equal(session.cmd, "echo test")
+    end)
+
+    it("should assign unique IDs to sessions", function()
+      local session1 = terminal_manager.create("cmd1")
+      local session2 = terminal_manager.create("cmd2")
+      assert.not_equal(session1.id, session2.id)
+    end)
+
+    it("should set the created session as active", function()
+      local session = terminal_manager.create("echo test")
+      local active = terminal_manager.get_active()
+      assert.equal(active.id, session.id)
+    end)
+
+    it("should return nil for empty command", function()
+      local session = terminal_manager.create("")
+      assert.is_nil(session)
+    end)
+
+    it("should return nil for nil command", function()
+      local session = terminal_manager.create(nil)
+      assert.is_nil(session)
+    end)
+  end)
+
+  describe("list", function()
+    it("should return empty list when no sessions exist", function()
+      local sessions = terminal_manager.list()
+      assert.equal(#sessions, 0)
+    end)
+
+    it("should return all created sessions", function()
+      terminal_manager.create("cmd1")
+      terminal_manager.create("cmd2")
+      terminal_manager.create("cmd3")
+      local sessions = terminal_manager.list()
+      assert.equal(#sessions, 3)
+    end)
+
+    it("should include session metadata in list", function()
+      terminal_manager.create("echo test")
+      local sessions = terminal_manager.list()
+      local session = sessions[1]
+      assert.is_not_nil(session.id)
+      assert.equal(session.cmd, "echo test")
+    end)
+  end)
+
+  describe("switch", function()
+    it("should switch to an existing session", function()
+      local session1 = terminal_manager.create("cmd1")
+      local session2 = terminal_manager.create("cmd2")
+      terminal_manager.switch(session1.id)
+      local active = terminal_manager.get_active()
+      assert.equal(active.id, session1.id)
+    end)
+
+    it("should return false for non-existent session ID", function()
+      local result = terminal_manager.switch("invalid-id")
+      assert.equal(result, false)
+    end)
+
+    it("should update active session when switching", function()
+      local s1 = terminal_manager.create("cmd1")
+      local s2 = terminal_manager.create("cmd2")
+      terminal_manager.switch(s1.id)
+      assert.equal(terminal_manager.get_active().id, s1.id)
+      terminal_manager.switch(s2.id)
+      assert.equal(terminal_manager.get_active().id, s2.id)
+    end)
+  end)
+
+  describe("close", function()
+    it("should remove session from list", function()
+      local session = terminal_manager.create("echo test")
+      terminal_manager.close(session.id)
+      local sessions = terminal_manager.list()
+      assert.equal(#sessions, 0)
+    end)
+
+    it("should return false for non-existent session", function()
+      local result = terminal_manager.close("invalid-id")
+      assert.equal(result, false)
+    end)
+
+    it("should switch to another session if active is closed", function()
+      local s1 = terminal_manager.create("cmd1")
+      local s2 = terminal_manager.create("cmd2")
+      -- s2 is active, close it
+      terminal_manager.close(s2.id)
+      local active = terminal_manager.get_active()
+      assert.equal(active.id, s1.id)
+    end)
+
+    it("should clear active session if last session is closed", function()
+      local session = terminal_manager.create("cmd")
+      terminal_manager.close(session.id)
+      local active = terminal_manager.get_active()
+      assert.is_nil(active)
+    end)
+  end)
+
+  describe("get_active", function()
+    it("should return nil when no sessions exist", function()
+      local active = terminal_manager.get_active()
+      assert.is_nil(active)
+    end)
+
+    it("should return the current active session", function()
+      local session = terminal_manager.create("echo test")
+      local active = terminal_manager.get_active()
+      assert.is_not_nil(active)
+      assert.equal(active.id, session.id)
+    end)
+  end)
+
+  describe("clear_all", function()
+    it("should remove all sessions", function()
+      terminal_manager.create("cmd1")
+      terminal_manager.create("cmd2")
+      terminal_manager.create("cmd3")
+      terminal_manager.clear_all()
+      local sessions = terminal_manager.list()
+      assert.equal(#sessions, 0)
+    end)
+
+    it("should clear active session", function()
+      terminal_manager.create("cmd")
+      terminal_manager.clear_all()
+      local active = terminal_manager.get_active()
+      assert.is_nil(active)
+    end)
+  end)
+
+  describe("get_by_id", function()
+    it("should return session by ID", function()
+      local created = terminal_manager.create("echo test")
+      local session = terminal_manager.get_by_id(created.id)
+      assert.equal(session.id, created.id)
+      assert.equal(session.cmd, "echo test")
+    end)
+
+    it("should return nil for non-existent ID", function()
+      local session = terminal_manager.get_by_id("invalid-id")
+      assert.is_nil(session)
+    end)
+  end)
+end)

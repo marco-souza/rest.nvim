@@ -10,17 +10,16 @@
 
 ```
 lua/
-├── cmd.lua              # Command definitions and handlers
-├── term.lua             # Main plugin entry point
-├── ui/
-│   └── dashboard.lua    # Dashboard UI (2-pane layout)
-├── utils/
-│   ├── terminal.lua     # Terminal session management
-│   └── env.lua          # Environment variable handling
-└── tests/
-    ├── init.lua
-    ├── terminal.lua
-    └── env.lua
+├── term/                # Plugin package (matches "term.nvim")
+│   ├── init.lua         # Entry point: require("term")
+│   ├── cmd.lua          # Command definitions: require("term.cmd")
+│   ├── types.lua        # Shared type definitions
+│   ├── ui/
+│   │   └── dashboard.lua # Dashboard UI: require("term.ui.dashboard")
+│   └── utils/
+│       └── terminal.lua # Terminal session management (TODO)
+└── tests/               # Test files
+    └── init.lua         # Test runner
 ```
 
 ### Core Modules
@@ -40,8 +39,38 @@ lua/
 ### Code Style
 - Follow `.stylua.toml` formatting rules
 - Run `make lint` before committing
-- Max line length: 120 characters
+- Max line length: 80 characters (stylua enforces this)
 - Use 2 spaces for indentation
+- Always define default values for function parameters
+- Use Lua comments to document types: `---@param name type: description`
+
+### Default Values
+- Always provide sensible defaults in `_defaults` table at module level
+- Merge user options with defaults using `vim.tbl_deep_extend("force", defaults, opts or {})`
+- Example:
+  ```lua
+  local _defaults = { margin = 2 }
+  local function my_function(opts)
+    opts = vim.tbl_deep_extend("force", _defaults, opts or {})
+    -- opts.margin is guaranteed to exist
+  end
+  ```
+
+### Type Documentation
+- Document function parameters with Lua type comments
+- Format: `---@param param_name param_type: description`
+- Define shared types in `lua/term/types.lua` to avoid repetition
+- Example:
+  ```lua
+  -- lua/term/types.lua
+  ---@class TermOptions
+  ---@field margin number: Margin size in characters (default: 2)
+  
+  -- Usage in other files:
+  ---@param opts TermOptions
+  local function toggle(opts)
+  end
+  ```
 
 ### File Organization
 - Keep UI code in `ui/` directory
@@ -52,15 +81,24 @@ lua/
 
 ### Development
 ```bash
-make lint           # Run stylua and luacheck
-make test           # Run test suite
-make format         # Format code with stylua
+make fmt            # Format code with stylua
+make lint           # Run luacheck linter
+make test           # Run test suite (headless nvim)
+make pr-ready       # Format + lint (ready for PR)
 ```
 
 ### Testing
-- Add tests in `tests/` directory
+- Run all tests: `make test`
+- Tests run in headless Neovim: `nvim --headless -c 'lua require("tests")' -c 'qa!'`
+- Add tests in `tests/` directory mirroring source structure
 - Use descriptive test names
 - Test utilities separately from UI components
+
+### Code Formatting & Linting
+- **stylua**: Formats Lua code (80 char width, 2-space indent)
+- **luacheck**: Static analysis (allows `vim` global)
+- Run `make fmt` before committing
+- Max line length: 80 characters (stylua config)
 
 ## Plugin Architecture
 
@@ -130,6 +168,7 @@ Components used in term.nvim:
   - Use case: Left and right panels for session list and terminal
   
 - **Layout**: Complex multi-pane layouts with flexible box model
+
   - Docs: https://github.com/MunifTanjim/nui.nvim/wiki/nui.layout
   - Use case: Manage 20% left / 80% right layout
   
