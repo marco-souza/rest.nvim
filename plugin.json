@@ -1,5 +1,5 @@
 {
-  "name": "marco-souza/rest.nvim",
-  "description": "A Postman-like Neovim client",
-  "version": "1.0.0"
+  "name": "marco-souza/term.nvim",
+  "description": "A better terminal for Neovim",
+  "version": "2.0.0"
 }
