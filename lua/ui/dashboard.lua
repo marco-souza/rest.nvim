@@ -53,6 +53,8 @@ end
 ---@return function
 local function feth_to_ui(request)
   return function()
+    vim.print(request)
+
     local res = curl.request({
       url = request.url,
       method = request.method,

@@ -3,7 +3,10 @@
 <div>
   <h4 align="center">
     <a href="#dependencies">Dependencies</a> ·
-    <a href="#usage">Usage</a>
+    <a href="#installation">Installation</a> ·
+    <a href="#usage">Usage</a> ·
+    <a href="docs/">Documentation</a> ·
+    <a href="docs/FEATURES.md">Features</a>
   </h4>
 </div>
 
@@ -40,14 +43,20 @@ A Neovim plugin that provides a REST client interface for making HTTP requests d
 
 ### Features
 
-- Execute HTTP requests directly from Neovim
-- Interactive REST client dashboard
-- Support for `.rest` files to define API requests
-- View and edit request headers, body, and URL
-- Toggle between horizontal and vertical layouts
-- Supports all major HTTP methods: GET, POST, PUT, DELETE, PATCH, OPTIONS, HEAD
-- Seamless integration with `nui.nvim` and `plenary.nvim`
-- Support for using environment variables in `.rest` files and dashboard
+- **Postman-like Dashboard**: Dual-pane layout with request editor (30%) and response viewer (70%)
+- **Async HTTP Requests**: Non-blocking async execution with animated loading spinner
+- **Direct Command Execution**: `:Rest GET https://api.example.com` for instant requests
+- **Interactive Dashboard**: `:Rest` to open the request/response editor
+- **Support for `.rest` files**: Define and execute API requests from `.rest` files
+- **Full HTTP Method Support**: GET, POST, PUT, DELETE, PATCH, OPTIONS, HEAD
+- **Request Customization**: Edit headers, body, and URL in real-time
+- **Layout Toggle**: Switch between horizontal and vertical layouts with `r` key
+- **Response Formatting**: Automatic JSON pretty-printing and detection
+- **Environment Variables**: Use `$VAR_NAME` syntax in requests
+- **Syntax Highlighting**: Treesitter-powered highlighting for request and response
+- **Word Wrap Toggle**: Easy toggling of line wrapping with `<C-w>`
+- **Auto-load REST Files**: Automatically loads content from open `.rest` files
+- **Seamless Integration**: Built with `nui.nvim` and `plenary.nvim`
 
 ## Dependencies
 
@@ -73,14 +82,33 @@ Install with your preferred package manager:
 }
 ```
 
+### Configuration
+
+Customize the dashboard with options:
+
+```lua
+require("rest").setup({
+  request_size = "30%",    -- Request pane size
+  response_size = "70%",   -- Response pane size
+  width = "80%",           -- Dashboard width
+  height = "80%",          -- Dashboard height
+  border = "rounded",      -- Border style
+  margin = 0,              -- Margin around dashboard
+})
+```
+
+For detailed configuration options, see the `DashboardOptions` type in `lua/rest/types.lua`.
+
 ## Usage
 
 ### Commands
 
 The plugin provides the following commands:
 
-- `:Rest open` - Opens the REST client dashboard
-- `:Rest close` - Closes the REST client dashboard
+- `:Rest` - Opens/toggles the REST client dashboard
+- `:Rest GET https://api.example.com` - Execute GET request directly and show result
+- `:Rest POST https://api.example.com` - Execute POST request (edit body in dashboard)
+- `:Rest <METHOD> <URL>` - Execute any HTTP request directly
 
 ### Working with REST files
 
@@ -103,11 +131,24 @@ Authorization: Bearer your-token-here
 
 Once you have the dashboard open:
 
-1. Edit your request in the left panel
-2. Press `<C-s>` to execute the request
-3. View the response in the right panel
-4. Press `r` to toggle between horizontal and vertical layout
-5. Press `q` to close the dashboard
+1. **Edit Request** (Left Pane - 30%):
+   - Edit method, URL, headers, and body
+   - Format: `METHOD URL` on first line
+   - Headers: `Key: Value` format, one per line
+   - Body: Everything after headers
+
+2. **View Response** (Right Pane - 70%):
+   - Press `<C-s>` to execute the request
+   - Watch the animated spinner while loading
+   - Response appears with status, headers, and body
+   - JSON automatically formatted and pretty-printed
+
+3. **Keyboard Shortcuts**:
+    - `<C-s>` - Execute request
+    - `<C-w>` - Toggle word wrap in response
+    - `<C-y>` - Copy response to clipboard
+    - `r` - Toggle between horizontal and vertical layout
+    - `q` - Close the dashboard
 
 ### REST File Format
 
@@ -125,6 +166,17 @@ Once you have the dashboard open:
 - PATCH
 - OPTIONS
 - HEAD
+
+## Documentation
+
+Comprehensive documentation is available in the `docs/` folder:
+
+- **[Features](docs/FEATURES.md)** - Complete feature overview and roadmap
+- **[Architecture](docs/ARCHITECTURE.md)** - Technical design and module structure
+- **[Development](docs/DEVELOPMENT.md)** - Development guide for contributors
+- **[Migration](docs/MIGRATION.md)** - Upgrade guide from previous versions
+
+Start with [Documentation Index](docs/README.md) for a complete overview.
 
 ## License
 
